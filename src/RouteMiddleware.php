@@ -36,15 +36,43 @@ class RouteMiddleware
                 'status_code',
             ]
         );
+
+        $path = $request->getPathInfo();
+        if(config('prometheus.route_middleware_export_path_uri')){
+            $path = $this->getUri($request);
+        }
+
         /** @var  Histogram $histogram */
         $histogram->observe(
             $duration,
             [
                 $request->method(),
-                $request->getPathInfo(),
+                $path,
                 $response->getStatusCode(),
             ]
         );
+
         return $response;
+    }
+
+    /**
+     * Gets the uri of the current route `/v1/test/{id}`
+     * without the variables replaced `/v1/test/45`.
+     *
+     * @param Request $request
+     *
+     * @return string The route URI
+     */
+    public function getUri(Request $request) : string
+    {
+        $routes = app('prometheus.routes.paths');
+        $uses = $request->route()[1]['uses'] ?? '';
+        foreach ($routes as $routeUses => $routeUri) {
+            if (!empty($uses) && !empty($routeUri) && $routeUses === $uses) {
+                return $routeUri;
+            }
+        }
+
+        return '';
     }
 }

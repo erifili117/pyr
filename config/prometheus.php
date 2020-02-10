@@ -100,5 +100,17 @@ return [
 
     'default_metric_labels' => [
         //Set your default env vars labels here
-    ]
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Route middleware exported path
+    |--------------------------------------------------------------------------
+    |
+    | When registering metrics differentiate between path info or URI.
+    | By default path info is used.
+    |
+    */
+
+    'route_middleware_export_path_uri' => env('PYR_MIDDLEWARE_EXPORTED_PATH_URI', false)
 ];
